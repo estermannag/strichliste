@@ -16,7 +16,7 @@ body { font-family: -apple-system, Arial, sans-serif; background: #0f1117; color
 .card.danger { border-color: #e24b4a; box-shadow: 0 0 28px rgba(226,75,74,0.3); }
 .av { width: 200px; height: 200px; border-radius: 50%; overflow: hidden; margin-bottom: 1.2rem; border: 3px solid #2a2d3a; }
 .card.danger .av { border-color: #e24b4a; }
-.av img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.av img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; }
 .cname { font-size: 2.4rem; font-weight: 600; margin-bottom: 1.5rem; }
 .srow { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; min-height: 50px; align-items: center; margin-bottom: 0.75rem; }
 .sm { width: 16px; height: 50px; background: #e24b4a; border-radius: 3px; }
@@ -29,7 +29,7 @@ body { font-family: -apple-system, Arial, sans-serif; background: #0f1117; color
 .ah p { font-size: 0.85rem; color: #888; margin-top: 4px; }
 .ac { background: #1a1d27; border: 0.5px solid #2a2d3a; border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 10px; }
 .aav { width: 56px; height: 56px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #2a2d3a; }
-.aav img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.aav img { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; }
 .aname { font-size: 1rem; font-weight: 500; flex: 1; }
 .astr { display: flex; gap: 4px; margin-right: 6px; align-items: center; min-width: 44px; }
 .ms { width: 9px; height: 28px; background: #e24b4a; border-radius: 2px; }
@@ -148,7 +148,7 @@ function setSS(state,msg){
 }
 
 function pi(name,size){
-  return '<img src="'+PH[name]+'" style="width:'+size+'px;height:'+size+'px;border-radius:50%;object-fit:cover;object-position:top;">';
+  return '<img src="'+PH[name]+'" style="width:'+size+'px;height:'+size+'px;border-radius:50%;object-fit:cover;object-position:center 15%;">';
 }
 
 function render(){
