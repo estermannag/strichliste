@@ -8,34 +8,33 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, Arial, sans-serif; background: #0f1117; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
 .header { text-align: center; padding: 1.5rem 1rem 1rem; border-bottom: 0.5px solid #2a2d3a; }
-.header h1 { font-size: 1.2rem; font-weight: 600; color: #fff; }
+.header h1 { font-size: 1.2rem; font-weight: 600; }
 .header p { font-size: 0.8rem; color: #555; margin-top: 4px; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; flex: 1; }
-.card { background: #1a1d27; border: 1.5px solid #2a2d3a; border-radius: 16px; padding: 1.2rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; transition: border-color 0.15s, transform 0.1s; -webkit-tap-highlight-color: transparent; user-select: none; }
-.card:active { transform: scale(0.97); border-color: #e24b4a; }
-.card.added { border-color: #e24b4a; animation: flash 0.4s ease; }
-@keyframes flash { 0%,100%{border-color:#2a2d3a;} 50%{border-color:#e24b4a;box-shadow:0 0 20px rgba(226,75,74,0.4);} }
-.av { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid #2a2d3a; }
+.card { background: #1a1d27; border: 1.5px solid #2a2d3a; border-radius: 16px; padding: 1.2rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.card.danger { border-color: #e24b4a; box-shadow: 0 0 20px rgba(226,75,74,0.25); }
+.av { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid #2a2d3a; flex-shrink: 0; }
+.card.danger .av { border-color: #e24b4a; }
 .av img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .name { font-size: 1rem; font-weight: 600; }
-.striche-row { display: flex; gap: 5px; justify-content: center; min-height: 28px; align-items: center; }
+.striche-row { display: flex; gap: 5px; justify-content: center; min-height: 28px; align-items: center; flex-wrap: wrap; }
 .sm { width: 10px; height: 28px; background: #e24b4a; border-radius: 2px; }
 .sleer { font-size: 0.75rem; color: #555; }
-.plus-btn { width: 100%; background: transparent; border: 1px solid #e24b4a; color: #e24b4a; border-radius: 10px; padding: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.plus-btn:active { background: rgba(226,75,74,0.15); }
 .beer-badge { background: #FAC775; color: #412402; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+.btn-row { display: flex; gap: 8px; width: 100%; }
+.btn-minus { height: 44px; width: 44px; flex-shrink: 0; background: transparent; border: 1px solid #3a3d4a; color: #888; border-radius: 10px; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; transition: background 0.1s; }
+.btn-minus:active { background: #2a2d3a; }
+.btn-plus { flex: 1; height: 44px; background: transparent; border: 1px solid #e24b4a; color: #e24b4a; border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background 0.1s; }
+.btn-plus:active { background: rgba(226,75,74,0.15); }
 .footer { text-align: center; padding: 12px; font-size: 11px; color: #333; }
 .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #555; margin-right: 4px; vertical-align: middle; }
 .dot.ok { background: #1D9E75; }
 .dot.err { background: #e24b4a; }
 .dot.spin { background: #FAC775; animation: p 0.8s ease-in-out infinite; }
 @keyframes p { 0%,100%{opacity:1;}50%{opacity:0.2;} }
-
-/* Toast */
-.toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #e24b4a; color: #fff; border-radius: 30px; padding: 10px 24px; font-size: 0.9rem; font-weight: 600; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; }
+.toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #1a1d27; border: 0.5px solid #3a3d4a; color: #fff; border-radius: 30px; padding: 10px 24px; font-size: 0.85rem; font-weight: 500; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; }
 .toast.show { opacity: 1; }
-
-/* Setup overlay */
+.toast.red { background: #e24b4a; border-color: #e24b4a; }
 .setup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1rem; }
 .setup-box { background: #1a1d27; border: 0.5px solid #2a2d3a; border-radius: 16px; padding: 1.5rem; width: 100%; max-width: 360px; }
 .setup-box h2 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
@@ -61,7 +60,6 @@ body { font-family: -apple-system, Arial, sans-serif; background: #0f1117; color
 
 <div class="toast" id="toast"></div>
 
-<!-- Setup overlay – shown if no credentials -->
 <div class="setup-overlay" id="setup-overlay" style="display:none;">
   <div class="setup-box">
     <h2>&#9881; Einmalige Einrichtung</h2>
@@ -89,19 +87,22 @@ function render(){
   for(var i=0;i<data.length;i++){
     var l=data[i], danger=l.striche>=3;
     var sh=l.striche===0?'<span class="sleer">keine Striche</span>':Array(l.striche).fill('<div class="sm"></div>').join('');
-    g+='<div class="card" id="card-'+i+'" onclick="add('+i+')">'
+    g+='<div class="card'+(danger?' danger':'')+'" id="card-'+i+'">'
       +'<div class="av"><img src="'+PH[l.name]+'" alt="'+l.name+'"></div>'
       +'<div class="name">'+l.name+'</div>'
       +'<div class="striche-row">'+sh+'</div>'
       +(danger?'<div class="beer-badge">Bier! &#127866;</div>':'')
-      +'<button class="plus-btn" onclick="event.stopPropagation();add('+i+')">+ Strich vergeben</button>'
+      +'<div class="btn-row">'
+      +'<button class="btn-minus" onclick="sub('+i+')" title="Strich entfernen">&#8722;</button>'
+      +'<button class="btn-plus" onclick="add('+i+')">+ Strich</button>'
+      +'</div>'
       +'</div>';
   }
   document.getElementById('grid').innerHTML=g;
 }
 
 async function sbFetch(path,opts){
-  return fetch(SB_URL+'/rest/v1/'+path, Object.assign({
+  return fetch(SB_URL+'/rest/v1/'+path,Object.assign({
     headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'}
   },opts||{}));
 }
@@ -121,20 +122,29 @@ async function loadCloud(){
   }catch(e){ setSS('err','Sync fehlgeschlagen'); }
 }
 
-async function add(i){
-  data[i].striche++;
-  render();
-  // Flash animation
-  var card=document.getElementById('card-'+i);
-  if(card){card.classList.add('added');setTimeout(function(){card.classList.remove('added');},500);}
-  var n=data[i].name, c=data[i].striche;
-  showToast(c>=3?n+' – Nachtessen & Bier! &#127866;':'+1 Strich fuer '+n);
+async function saveOne(i){
   setSS('spin','Speichert...');
   try{
     var res=await sbFetch('striche?name=eq.'+data[i].name,{method:'PATCH',body:JSON.stringify({anzahl:data[i].striche})});
     if(!res.ok)throw new Error(res.status);
     setSS('ok','Gespeichert');
   }catch(e){ setSS('err','Fehler beim Speichern'); }
+}
+
+function add(i){
+  data[i].striche++;
+  render();
+  var n=data[i].name, c=data[i].striche;
+  showToast('+ Strich: '+n+' ('+c+')', c>=3);
+  saveOne(i);
+}
+
+function sub(i){
+  if(data[i].striche<=0){ showToast(data[i].name+' hat keine Striche', false); return; }
+  data[i].striche--;
+  render();
+  showToast('- Strich entfernt: '+data[i].name, false);
+  saveOne(i);
 }
 
 async function doSetup(){
@@ -149,15 +159,15 @@ async function doSetup(){
     if(!Array.isArray(rows)||rows.length===0)throw new Error('Tabelle leer');
     saveCreds(url,key);
     document.getElementById('setup-overlay').style.display='none';
-    msg.style.color='#1D9E75'; msg.textContent='Verbunden!';
     loadCloud();
     setInterval(loadCloud,15000);
   }catch(e){ msg.style.color='#e24b4a'; msg.textContent='Fehler: '+e.message; }
 }
 
-function showToast(msg){
+function showToast(msg, red){
   var t=document.getElementById('toast');
-  t.innerHTML=msg; t.classList.add('show');
+  t.innerHTML=msg;
+  t.className='toast'+(red?' red':'')+' show';
   setTimeout(function(){t.classList.remove('show');},2500);
 }
 
