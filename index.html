@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Strichliste - Estermann AG v12</title>
+<title>Strichliste - Estermann AG v13</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, Arial, sans-serif; background: #0f1117; color: #fff; min-height: 100vh; }
@@ -171,7 +171,15 @@ async function doSetup(){
     var rows=await res.json();
     if(!Array.isArray(rows)||rows.length===0)throw new Error('Tabelle leer');
     saveCreds(url,key);msg.style.color='#1D9E75';msg.textContent='Verbunden!';
-    updateConnected();loadCloud();setInterval(loadCloud,15000);showToast('Cloud-Sync aktiv!');
+    updateConnected();loadCloud();setInterval(loadCloud, 10000);
+
+// Reload data when page becomes visible again (e.g. TV wakes up)
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) loadCloud();
+});
+
+// Force full page reload every 5 minutes to ensure fresh state
+setTimeout(function() { location.reload(); }, 5 * 60 * 1000);showToast('Cloud-Sync aktiv!');
   }catch(e){msg.style.color='#e24b4a';msg.textContent='Fehler: '+e.message;}
 }
 function clearSetup(){
