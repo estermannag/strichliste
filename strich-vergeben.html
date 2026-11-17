@@ -63,8 +63,8 @@ body { font-family: -apple-system, Arial, sans-serif; background: #0f1117; color
 <div class="setup-overlay" id="setup-overlay" style="display:none;">
   <div class="setup-box">
     <h2>Strich vergeben</h2>
-    <p>Nur f&uuml;r Mitarbeitende der Estermann AG.<br>Bitte Zugangscode eingeben (einmalig pro Ger&auml;t).</p>
-    <input class="sinput" id="sb-key" type="password" placeholder="Zugangscode" onkeydown="if(event.key==='Enter')doSetup()" />
+    <p>Nur f&uuml;r Mitarbeitende der Estermann AG.<br>Bitte Passwort eingeben (einmalig pro Ger&auml;t).</p>
+    <input class="sinput" id="sb-key" type="password" placeholder="Passwort" onkeydown="if(event.key==='Enter')doSetup()" />
     <button class="sbtn" onclick="doSetup()">Freischalten</button>
     <div class="smsg" id="smsg"></div>
   </div>
@@ -73,11 +73,12 @@ body { font-family: -apple-system, Arial, sans-serif; background: #0f1117; color
 <script>
 var PH={},PHLOADED=false;
 var SB_DEFAULT_URL='https://ywidauutzknomyjcyuho.supabase.co';
+var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3aWRhdXV0emtub215amN5dWhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDAzMTksImV4cCI6MjA5MTkxNjMxOX0.p4CYCFBGmmItA2AhCznFV7hlwmmkjb-mbt6fsbDdXIs';
 var data=[{name:'Enea',striche:0},{name:'Levin',striche:0},{name:'Noah',striche:0},{name:'Sandro',striche:0}];
 var SB_URL='', SB_KEY='';
 
-function loadCreds(){ SB_URL=localStorage.getItem('sb_url')||SB_DEFAULT_URL; SB_KEY=localStorage.getItem('sb_key')||''; }
-function saveCreds(u,k){ localStorage.setItem('sb_url',u); localStorage.setItem('sb_key',k); SB_URL=u; SB_KEY=k; }
+function loadCreds(){ SB_URL=SB_DEFAULT_URL; SB_KEY=localStorage.getItem('sb_pw')||''; localStorage.removeItem('sb_key'); localStorage.removeItem('sb_url'); }
+function saveCreds(u,k){ localStorage.setItem('sb_pw',k); SB_URL=u; SB_KEY=k; }
 function setSS(state,msg){ document.getElementById('sdot').className='dot '+state; document.getElementById('stxt').textContent=msg; }
 
 function render(){
@@ -99,14 +100,12 @@ function render(){
   document.getElementById('grid').innerHTML=g;
 }
 
-async function sbFetch(path,opts){
-  return fetch(SB_URL+'/rest/v1/'+path,Object.assign({
-    headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'}
-  },opts||{}));
+async function rpc(fn,args){
+  return fetch(SB_DEFAULT_URL+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'apikey':SB_ANON,'Authorization':'Bearer '+SB_ANON,'Content-Type':'application/json'},body:JSON.stringify(args)});
 }
 
 async function loadPhotos(){
-  var res=await sbFetch('striche?select=name,foto');
+  var res=await rpc('liste',{p:SB_KEY,mit_foto:true});
   if(!res.ok)throw new Error(res.status);
   var rows=await res.json();
   rows.forEach(function(r){if(r.foto)PH[r.name]=r.foto;});
@@ -122,8 +121,8 @@ async function loadCloud(){
   setSS('spin','Lade...');
   try{
     if(!PHLOADED)await loadPhotos();
-    var res=await sbFetch('striche?select=name,anzahl&order=name');
-    if(res.status===401||res.status===403){localStorage.removeItem('sb_key');SB_KEY='';showLock('Zugangscode ung\u00fcltig');return;}
+    var res=await rpc('liste',{p:SB_KEY,mit_foto:false});
+    if(res.status===401||res.status===403)throw new Error('403');
     if(!res.ok)throw new Error(res.status);
     var rows=await res.json();
     if(rows&&rows.length>0){
@@ -131,13 +130,16 @@ async function loadCloud(){
       render();
       setSS('ok','Bereit');
     }
-  }catch(e){ setSS('err','Sync fehlgeschlagen'); }
+  }catch(e){
+    if(String(e.message)==='403'||String(e.message)==='401'){localStorage.removeItem('sb_pw');SB_KEY='';showLock('Passwort falsch');}
+    else setSS('err','Sync fehlgeschlagen');
+  }
 }
 
 async function saveOne(i){
   setSS('spin','Speichert...');
   try{
-    var res=await sbFetch('striche?name=eq.'+data[i].name,{method:'PATCH',body:JSON.stringify({anzahl:data[i].striche})});
+    var res=await rpc('setze',{p:SB_KEY,n:data[i].name,a:data[i].striche});
     if(!res.ok)throw new Error(res.status);
     setSS('ok','Gespeichert');
   }catch(e){ setSS('err','Fehler beim Speichern'); }
@@ -164,8 +166,8 @@ async function doSetup(){
   var msg=document.getElementById('smsg');
   msg.style.color='#FAC775'; msg.textContent='Pr\u00fcfe...';
   try{
-    var res=await fetch(SB_DEFAULT_URL+'/rest/v1/striche?select=name',{headers:{'apikey':key,'Authorization':'Bearer '+key}});
-    if(!res.ok)throw new Error('Code ung\u00fcltig');
+    var res=await rpc('liste',{p:key,mit_foto:false});
+    if(!res.ok)throw new Error('Passwort falsch');
     saveCreds(SB_DEFAULT_URL,key);
     location.reload();
   }catch(e){ msg.style.color='#e24b4a'; msg.textContent=e.message; }
