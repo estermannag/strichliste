@@ -77,7 +77,8 @@ var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 var data=[{name:'Enea',striche:0},{name:'Levin',striche:0},{name:'Noah',striche:0},{name:'Sandro',striche:0}];
 var SB_URL='', SB_KEY='';
 
-function loadCreds(){ SB_URL=SB_DEFAULT_URL; SB_KEY=localStorage.getItem('sb_pw')||''; localStorage.removeItem('sb_key'); localStorage.removeItem('sb_url'); }
+function loadCreds(){ var m=/[#&]pw=([^&]*)/.exec(location.hash);if(m){try{localStorage.setItem('sb_pw',decodeURIComponent(m[1]));}catch(e){}try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
+  SB_URL=SB_DEFAULT_URL; SB_KEY=localStorage.getItem('sb_pw')||''; localStorage.removeItem('sb_key'); localStorage.removeItem('sb_url'); }
 function saveCreds(u,k){ localStorage.setItem('sb_pw',k); SB_URL=u; SB_KEY=k; }
 function setSS(state,msg){ document.getElementById('sdot').className='dot '+state; document.getElementById('stxt').textContent=msg; }
 
